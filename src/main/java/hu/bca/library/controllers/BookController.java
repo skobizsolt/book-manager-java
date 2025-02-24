@@ -30,7 +30,6 @@ public class BookController {
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping("/update-all-with-year")
-    @ResponseBody
     void updateAllWithYear() {
         bookService.updateAllWithYear();
     }

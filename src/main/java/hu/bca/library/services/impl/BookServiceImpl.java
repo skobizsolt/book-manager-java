@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 public class BookServiceImpl implements BookService {
     private static final String LINE_SEPARATOR_WHITESPACE = " ";
     private static final String REGEX_NUMBER = "-?(0|[1-9]\\d*)";
+    private static final int YEAR_LENGTH = 4;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final OpenLibraryService openLibraryService;
@@ -84,7 +85,7 @@ public class BookServiceImpl implements BookService {
             return null;
         }
         String yearAsString = Arrays.stream(publishDate.split(LINE_SEPARATOR_WHITESPACE))
-                .filter(part -> part.length() == 4 && part.matches(REGEX_NUMBER))
+                .filter(part -> part.length() == YEAR_LENGTH && part.matches(REGEX_NUMBER))
                 .findFirst()
                 .orElse(null);
         return yearAsString == null ? null : Integer.parseInt(yearAsString);
