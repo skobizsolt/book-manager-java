@@ -11,9 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -68,6 +67,18 @@ public class BookServiceImpl implements BookService {
         bookRepository.saveAll(booksToSave);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Book> getAllByCountry(String authorCountryCode, Integer fromDate) {
+        Objects.requireNonNull(authorCountryCode, "countryCode must not be NULL!");
+        return StreamSupport.stream(bookRepository.findAll().spliterator(), false)
+                .filter(book -> isBookValidByCriteria(book, authorCountryCode, fromDate))
+                .sorted(Comparator.comparing(Book::getYear, Comparator.nullsLast(Comparator.reverseOrder())))
+                .toList();
+    }
+
     private Integer getYearFromPublishDate(String publishDate) {
         if (publishDate == null) {
             return null;
@@ -77,5 +88,16 @@ public class BookServiceImpl implements BookService {
                 .findFirst()
                 .orElse(null);
         return yearAsString == null ? null : Integer.parseInt(yearAsString);
+    }
+
+    private boolean isBookValidByCriteria(Book book, String countryCode, Integer fromDate) {
+        // Base criteria: at least one author is from the UK
+        var criteria = book.getAuthors().stream().anyMatch(author -> countryCode.equals(author.getCountry()));
+
+        // Optional: the publishing year is not older than the given year
+        if (fromDate != null) {
+            criteria &= book.getYear() != null && book.getYear() >= fromDate;
+        }
+        return criteria;
     }
 }

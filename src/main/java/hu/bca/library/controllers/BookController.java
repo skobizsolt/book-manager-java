@@ -2,12 +2,12 @@ package hu.bca.library.controllers;
 
 import hu.bca.library.models.Book;
 import hu.bca.library.services.BookService;
+import jakarta.annotation.Nullable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RepositoryRestController("books")
 public class BookController {
@@ -33,5 +33,19 @@ public class BookController {
     @ResponseBody
     void updateAllWithYear() {
         bookService.updateAllWithYear();
+    }
+
+    /**
+     * API to get all books by the authors county.
+     *
+     * @param authorCountryCode the author's country code
+     * @param fromDate          *optional* the minimum publish year for a book
+     * @return {@link List} of {@link Book}s, ordered by the most recent ones.
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping("/query/{authorCountryCode}")
+    @ResponseBody List<Book> getAllByCountry(@PathVariable("authorCountryCode") String authorCountryCode,
+                                             @RequestParam @Nullable Integer fromDate) {
+        return bookService.getAllByCountry(authorCountryCode, fromDate);
     }
 }
