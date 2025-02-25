@@ -44,7 +44,8 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping("/query/{authorCountryCode}")
     @ResponseBody List<Book> getAllByCountry(@PathVariable("authorCountryCode") String authorCountryCode,
-                                             @RequestParam("from") @Nullable Integer fromYear) {
-        return bookService.getAllByCountry(authorCountryCode, fromYear);
+                                             @RequestParam("from") @Nullable Integer fromYear,
+                                             @RequestParam("to") @Nullable Integer toYear) {
+        return bookService.getAllByCountry(authorCountryCode, fromYear, toYear);
     }
 }

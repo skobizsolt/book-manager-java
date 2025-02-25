@@ -17,7 +17,8 @@ public interface BookService {
      *
      * @param authorCountryCode the author's county
      * @param fromYear          the minimum publish year
+     * @param toYear
      * @return {@link List} of {@link Book}s, ordered by the most recent published ones.
      */
-    List<Book> getAllByCountry(String authorCountryCode, Integer fromYear);
+    List<Book> getAllByCountry(String authorCountryCode, Integer fromYear, final Integer toYear);
 }

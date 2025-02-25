@@ -72,10 +72,10 @@ public class BookServiceImpl implements BookService {
      * {@inheritDoc}
      */
     @Override
-    public List<Book> getAllByCountry(String authorCountryCode, Integer fromYear) {
+    public List<Book> getAllByCountry(String authorCountryCode, Integer fromYear, final Integer toYear) {
         Objects.requireNonNull(authorCountryCode, "countryCode must not be NULL!");
         return StreamSupport.stream(bookRepository.findAll().spliterator(), false)
-                .filter(book -> isBookValidByCriteria(book, authorCountryCode, fromYear))
+                .filter(book -> isBookValidByCriteria(book, authorCountryCode, fromYear, toYear))
                 .sorted(Comparator.comparing(Book::getYear, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
     }
@@ -91,13 +91,16 @@ public class BookServiceImpl implements BookService {
         return yearAsString == null ? null : Integer.parseInt(yearAsString);
     }
 
-    private boolean isBookValidByCriteria(Book book, String countryCode, Integer fromYear) {
+    private boolean isBookValidByCriteria(Book book, String countryCode, Integer fromYear, final Integer toYear) {
         // Base criteria: at least one author is from the UK
         var criteria = book.getAuthors().stream().anyMatch(author -> countryCode.equals(author.getCountry()));
 
         // Optional: the publishing year is not older than the given year
         if (fromYear != null) {
             criteria &= book.getYear() != null && book.getYear() >= fromYear;
+        }
+        if (toYear != null) {
+            criteria &= book.getYear() != null && book.getYear() <= toYear;
         }
         return criteria;
     }
