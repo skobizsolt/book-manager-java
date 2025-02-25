@@ -38,13 +38,13 @@ public class BookController {
      * API to get all books by the authors county.
      *
      * @param authorCountryCode the author's country code
-     * @param fromDate          *optional* the minimum publish year for a book
+     * @param fromYear          *optional* the minimum publish year for a book
      * @return {@link List} of {@link Book}s, ordered by the most recent ones.
      */
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping("/query/{authorCountryCode}")
     @ResponseBody List<Book> getAllByCountry(@PathVariable("authorCountryCode") String authorCountryCode,
-                                             @RequestParam @Nullable Integer fromDate) {
-        return bookService.getAllByCountry(authorCountryCode, fromDate);
+                                             @RequestParam("from") @Nullable Integer fromYear) {
+        return bookService.getAllByCountry(authorCountryCode, fromYear);
     }
 }
